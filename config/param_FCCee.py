@@ -12,6 +12,7 @@ pubbasedir="/home/submit/jaeyserm/fccee/FCCDicts/"
 eosbaseinputdir="/home/submit/jaeyserm/fccee/"
 #eosbaseoutputdir="/eos/experiment/fcc/ee/generation/"
 eosbaseoutputdir="/data/submit/cms/store/fccee/sampleProduction/generation/"
+basedir = "/data/submit/jaeyserm/fccee/EventProducer/"
 
 #stat
 lhe_stat     = webbasedir+"statlhe.html"
@@ -24,7 +25,7 @@ delphes_web  = webbasedir+"Delphesevents_VERSION_DETECTOR.txt"
 stdhep_web   = webbasedir+"STDHEPevents.txt"
 
 #yaml directory
-yamldir      = pubbasedir+"yaml/FCCee/"
+yamldir      = basedir+"yaml/FCCee/"
 
 #proc lists
 procList     = pubbasedir+"FCCee_procDict_VERSION_DETECTOR.json"
@@ -72,7 +73,7 @@ pythiacards_dir  = eosbaseinputdir+"FCC-config/_VERSION_/FCCee/Generator/Pythia8
 ##where the EVTGEN card are stored
 evtgencards_dir  = eosbaseinputdir+"FCC-config/_VERSION_/FCCee/Generator/EvtGen/"
 ##where the WHIZARD cards are stored
-whizardcards_dir = eosbaseinputdir+"FCC-config/_VERSION_/FCCee/Generator/Whizard/"
+whizardcards_dir = basedir+"/cards/{version}/FCCee/Generator/Whizard/"
 ##where the KKMC cards are stored
 kkmccards_dir = eosbaseinputdir+"FCC-config/_VERSION_/FCCee/Generator/KKMC/"
 # /cvmfs/fcc.cern.ch/sw/latest/setup.sh 
@@ -573,6 +574,10 @@ gridpacklist = {
     'wzp6_egamma_eZ_Zbb_ecm365':['e(e)Z EPA, e- gamma, ecm=365 GeV','Z to bb','','615.2e-3','1.0','1.0'],
     'wzp6_gammae_eZ_Zbb_ecm365':['e(e)Z EPA, e+ gamma, ecm=365 GeV','Z to bb','','615.2e-3','1.0','1.0'],
 
+
+    'wzp6_ee_mumu_ecm91p2':['Z/gamma* to mumu, ecm=91.2 GeV','full phase space','','1.6878643E+03','1.0','1.0'],
+    'wzp6_ee_tautau_ecm91p2':['Z/gamma* to tautau, ecm=91.2 GeV','full phase space','','2.017','1.0','1.0'],
+    'wzp6_ee_ee_Mee_30_150_ecm91p2':['ee (s and t), ecm=91.2 GeV','30 < Mee < 150 GeV, 15 < theta < 165 deg','','1.53','1.0','1.0'],
 
 }
 

@@ -172,10 +172,10 @@ if __name__=="__main__":
         print ('problem, need to specify --reco or --LHE')
         sys.exit(3)
 
-    import EventProducer.common.utils as ut
-    if not ut.testeos(para.eostest,para.eostest_size):
-        print ('eos seems to have problems, should check, will exit')
-        sys.exit(3)
+    #import EventProducer.common.utils as ut
+    #if not ut.testeos(para.eostest,para.eostest_size):
+    #    print ('eos seems to have problems, should check, will exit')
+    #    sys.exit(3)
     
 
     if args.check:

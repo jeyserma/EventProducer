@@ -5,10 +5,13 @@ eostest='/eos/experiment/fcc/hh/tests/testfile.lhe.gz'
 eostest_size=1312594
 
 #directories
-webbasedir="/afs/cern.ch/user/f/fccsw/www/data/FCCee/"
-pubbasedir="/afs/cern.ch/work/f/fccsw/public/FCCDicts/"
-eosbaseinputdir="/eos/experiment/fcc/ee/generation/"
-eosbaseoutputdir="/eos/experiment/fcc/ee/generation/"
+webbasedir="/home/submit/jaeyserm/public_html//FCCee_generation/"
+#pubbasedir="/afs/cern.ch/work/f/fccsw/public/FCCDicts/"
+pubbasedir="/home/submit/jaeyserm/fccee/FCCDicts/"
+#eosbaseinputdir="/eos/experiment/fcc/ee/generation/"
+eosbaseinputdir="/home/submit/jaeyserm/fccee/"
+#eosbaseoutputdir="/eos/experiment/fcc/ee/generation/"
+eosbaseoutputdir="/data/submit/cms/store/fccee/sampleProduction/generation/"
 
 #stat
 lhe_stat     = webbasedir+"statlhe.html"

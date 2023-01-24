@@ -31,6 +31,8 @@ class send_p8():
 
         Dir = os.getcwd()
         nbjobsSub=0
+        
+        xrdcp=True
 
         p8list=self.para.pythialist
         outdir='%s%s/%s/'%(self.para.delphes_dir,self.version,self.detector)
@@ -71,6 +73,10 @@ class send_p8():
         if self.islsf==False and self.iscondor==False and self.islocal==False:
             print ("Submit issue : LSF nor CONDOR not Local flag defined !!!")
             sys.exit(3)
+            
+            
+        if self.islocal==False:
+            frun.write('mkdir -p %s/%s\n'%(outdir,self.process))
 
         condor_file_str=''
         while nbjobsSub<self.njobs:
@@ -112,24 +118,21 @@ class send_p8():
             frun.write('unset PYTHONHOME\n')
             frun.write('unset PYTHONPATH\n')
             frun.write('source %s\n'%(self.para.prodTag[self.version]))
-            #frun.write('source /cvmfs/sw.hsf.org/contrib/spack/share/spack/setup-env.sh\n')
-            #frun.write('spack load --first k4simdelphes build_type=Release ^evtgen+photos\n')
+
             
             frun.write('mkdir job%s_%s\n'%(uid,self.process))
             frun.write('cd job%s_%s\n'%(uid,self.process))
-            frun.write('export EOS_MGM_URL=\"root://eospublic.cern.ch\"\n')
-            if self.islocal==False:
-                frun.write('mkdir -p %s/%s\n'%(outdir,self.process))
-            frun.write('python /afs/cern.ch/work/f/fccsw/public/FCCutils/eoscopy.py %s card.tcl\n'%(delphescards_base))
+            
+            frun.write('xrdcp %s card.tcl\n'%(delphescards_base))
 
             if '_EvtGen' not in self.process:
-                frun.write('python /afs/cern.ch/work/f/fccsw/public/FCCutils/eoscopy.py %s card.cmd\n'%(pythiacard))
+                frun.write('xrdcp %s card.cmd\n'%(pythiacard))
                 frun.write('echo "" >> card.cmd\n')
                 frun.write('echo "Random:seed = %s" >> card.cmd\n'%uid)
                 frun.write('echo "Main:numberOfEvents = %i" >> card.cmd\n'%(self.events))
 
 
-            frun.write('python /afs/cern.ch/work/f/fccsw/public/FCCutils/eoscopy.py /eos/experiment/fcc/ee/generation/FCC-config/%s/FCCee/Delphes/edm4hep_%s.tcl edm4hep.tcl\n'%(self.version,self.detector))
+            frun.write('xrdcp /home/submit/jaeyserm/fccee/FCC-config/%s/FCCee/Delphes/edm4hep_%s.tcl edm4hep.tcl\n'%(self.version,self.detector))
             
             if '_EvtGen' not in self.process:
                 frun.write('DelphesPythia8_EDM4HEP card.tcl edm4hep.tcl card.cmd events_%s.root\n'%(uid)) 
@@ -212,7 +215,12 @@ class send_p8():
             #if ut.file_exist(outfile)==False:
             #    frun.write('cp events_%s.root %s\n'%(uid,outfile))
             #if ut.file_exist(outfile)==False:
-            frun.write('python /afs/cern.ch/work/f/fccsw/public/FCCutils/eoscopy.py events_%s.root %s\n'%(uid,outfile))
+            #frun.write('xrdcp events_%s.root %s\n'%(uid,outfile))
+            if xrdcp:
+                frun.write('xrdcp events_%s.root %s\n'%(uid,outfile.replace("/data/submit/cms/store/", "root://submit55.mit.edu//store/")))
+            else:
+                frun.write('xrdcp proc.stdhep.gz %s\n'%(outfile))
+            
             frun.write('cd ..\n')
             frun.write('rm -rf job%s_%s\n'%(uid,self.process))
             frun.close()
@@ -256,13 +264,18 @@ class send_p8():
             frun_condor.write('environment    = "LS_SUBCWD=%s"\n'%logdir) # not sure
             #frun_condor.write('requirements   = ( (OpSysAndVer =?= "CentOS7") && (Machine =!= LastRemoteHost) )\n')
             #frun_condor.write('requirements   = ( (OpSysAndVer =?= "SLCern6") && (Machine =!= LastRemoteHost) )\n')
-            frun_condor.write('requirements    = ( (OpSysAndVer =?= "CentOS7") && (Machine =!= LastRemoteHost) && (TARGET.has_avx2 =?= True) )\n')
+            #frun_condor.write('requirements    = ( (OpSysAndVer =?= "CentOS7") && (Machine =!= LastRemoteHost) && (TARGET.has_avx2 =?= True) )\n')
+            frun_condor.write('requirements   = ( BOSCOCluster =!= "t3serv008.mit.edu" && BOSCOCluster =!= "ce03.cmsaf.mit.edu" && BOSCOCluster =!= "eofe8.mit.edu")\n')
+            frun_condor.write('+DESIRED_Sites = "mit_tier3"\n')
 
             frun_condor.write('on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)\n')
             frun_condor.write('max_retries    = 3\n')
             frun_condor.write('+JobFlavour    = "%s"\n'%self.queue)
             frun_condor.write('+AccountingGroup = "%s"\n'%self.priority)
             frun_condor.write('RequestCpus = %s\n'%self.ncpus)
+            
+            frun_condor.write('use_x509userproxy = True\n')
+            frun_condor.write('x509userproxy = /home/submit/jaeyserm/x509up_u204569\n')
 	    
             frun_condor.write('queue filename matching files %s\n'%condor_file_str)
             frun_condor.close()

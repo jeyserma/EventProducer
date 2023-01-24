@@ -17,8 +17,8 @@ class checker_yaml():
 #__________________________________________________________
     def checkFile_stdhep(self, f):
 
-        hack = True
-        #hack = False
+        #hack = True
+        hack = False
 
         size=os.path.getsize(f)
         if size==0:
@@ -214,9 +214,6 @@ class checker_yaml():
         #ldir=[x[0] for x in os.walk(self.indir)]
         ldir=next(os.walk(self.indir))[1]
         
-        if not ut.testeos(self.para.eostest,self.para.eostest_size):
-            print ('eos seems to have problems, should check, will exit')
-            sys.exit(3)
 
         for l in ldir:
             if self.process!='' and self.process!=l: 
@@ -227,6 +224,7 @@ class checker_yaml():
             if not ut.file_exist('%s/%s/check'%(self.yamldir,l)) and not force: continue
             print ('--------------------- ',l)
             process=l
+            print(self.indir)
             All_files = glob.glob("%s/%s/events_*%s"%(self.indir,l,self.fext))
             print ('number of files  ',len(All_files))
             if len(All_files)==0:continue
@@ -241,7 +239,6 @@ class checker_yaml():
             njobsbad_tot=0
             userjobs=[]
             for f in All_files:
-
                 self.count = 0
                 if not os.path.isfile(f): 
                     print ('file does not exists... %s'%f)

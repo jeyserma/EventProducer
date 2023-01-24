@@ -24,9 +24,6 @@ class checker_eos():
         print(self.indireos)
         ldir=next(os.walk(self.indireos))[1]
         
-        if not ut.testeos(para.eostest,para.eostest_size):
-            print ('eos seems to have problems, should check, will exit')
-            sys.exit(3)
         dic={}
         for l in ldir:
             if self.process!='' and self.process!=l: 
